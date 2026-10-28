@@ -1,4 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ladybug Maze</title>
+<link rel="stylesheet" href="css/dadlock.css">
 <style>html,body{margin:0;height:100%;overflow:hidden;background:#5fa83c}[hidden]{display:none!important}</style></head><body>
 <div id="stage" hidden style="position:relative;height:100%;touch-action:none;overflow:hidden;border:8px solid #5a3e22;box-sizing:border-box;transition:none;box-shadow:inset 0 0 40px #0004;background:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg stroke-linecap='round' stroke-width='3' fill='none'%3E%3Cpath d='M10 70q2-12 0-20M14 72q4-10 8-16M50 30q-2-12 2-20M54 32q4-8 10-12M66 76q0-10-4-18' stroke='%234f9a33'/%3E%3Cpath d='M30 50q2-10 6-14M72 40q-3-8-1-14M22 20q2-8 0-14' stroke='%2378c04f'/%3E%3C/g%3E%3Ccircle cx='40' cy='66' r='3' fill='%23fff7a8'/%3E%3C/svg%3E&quot;),radial-gradient(circle at 30% 30%,#9ad66a,#5fa83c)">
 <button id="home" aria-label="Main menu" style="position:absolute;z-index:3;right:10px;top:10px;font-size:28px;border:0;border-radius:50%;width:52px;height:52px;background:#fff;box-shadow:0 4px 0 #0004;cursor:pointer">🏠</button>
@@ -26,11 +27,12 @@ let n=3,w,cw,ch,R,S,p,g=null,drag=false,ang=0,won=false;
 function make(n){const w=[...Array(n*n)].map(()=>[1,1,1,1]),v=new Set([0]),st=[0],D=[[0,-1,0,2],[1,0,1,3],[0,1,2,0],[-1,0,3,1]];
 while(st.length){const i=st[st.length-1],cx=i%n,cy=i/n|0,o=D.filter(([dx,dy])=>{const a=cx+dx,c=cy+dy;return a>=0&&c>=0&&a<n&&c<n&&!v.has(c*n+a)});
 if(!o.length){st.pop();continue}const[dx,dy,k,t]=o[Math.random()*o.length|0],j=(cy+dy)*n+cx+dx;w[i][k]=0;w[j][t]=0;v.add(j);st.push(j)}return w}
+const lf=new Image();lf.src='data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><radialGradient id="l" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#b6ef6a"/><stop offset=".55" stop-color="#5cbf2e"/><stop offset="1" stop-color="#2c7a16"/></radialGradient></defs><g stroke="#2b2b2b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M100 182 V196" fill="none"/><path d="M100 182 C30 160 28 70 100 14 C172 70 170 160 100 182Z" fill="url(#l)"/><path d="M100 176 V40 M100 140 L70 112 M100 140 L130 112 M100 104 L76 82 M100 104 L124 82" fill="none" stroke-width="4" stroke="#2c6a16"/></g><ellipse cx="74" cy="90" rx="10" ry="26" fill="#fff" opacity=".45" transform="rotate(20 74 90)"/></svg>`);lf.onload=()=>{if(w)init()};
 function init(){const W=cv.width=s.clientWidth,Hh=cv.height=s.clientHeight;cw=W/n;ch=Hh/n;R=Math.min(cw,ch)*.3;S=R*2.4;w=make(n);
 b.setAttribute('width',S);b.setAttribute('height',S);p={x:cw/2,y:ch/2};g=null;won=false;
 x.strokeStyle='#2f6b1f';x.lineWidth=Math.min(cw,ch)*.14;x.lineCap='round';x.beginPath();
 w.forEach((q,i)=>{const a=i%n*cw,c=(i/n|0)*ch;if(q[0]){x.moveTo(a,c);x.lineTo(a+cw,c)}if(q[1]){x.moveTo(a+cw,c);x.lineTo(a+cw,c+ch)}if(q[2]){x.moveTo(a,c+ch);x.lineTo(a+cw,c+ch)}if(q[3]){x.moveTo(a,c);x.lineTo(a,c+ch)}});x.stroke();
-x.font=R*1.6+'px serif';x.textAlign='center';x.textBaseline='middle';x.fillText('🍃',W-cw/2,Hh-ch/2)}
+const L=R*2.6;x.save();x.translate(W-cw/2,Hh-ch/2);x.rotate(-.35);x.drawImage(lf,-L/2,-L/2,L,L);x.restore()}
 function ok(X,Y){const i=Math.min(n-1,X/cw|0),j=Math.min(n-1,Y/ch|0),q=w[j*n+i],m=R*.9,lx=X-i*cw,ly=Y-j*ch,ex=lx<m||lx>cw-m,ey=ly<m||ly>ch-m;
 return X>0&&Y>0&&!(q[0]&&ly<m||q[2]&&ly>ch-m||q[3]&&lx<m||q[1]&&lx>cw-m||ex&&ey)}
 function step(){if(g&&!won){const dx=g.x-p.x,dy=g.y-p.y,L=Math.hypot(dx,dy);
@@ -73,4 +75,39 @@ s.style.cssText=`left:0;top:0;transform:translate(${x0}px,${y}px) rotate(${ang}d
 M.appendChild(s);requestAnimationFrame(()=>requestAnimationFrame(()=>s.style.transform=`translate(${x1}px,${y2}px) rotate(${ang}deg)`));setTimeout(()=>s.remove(),6000)}
 setInterval(()=>{if(M.clientWidth&&!matchMedia('(prefers-reduced-motion: reduce)').matches){run();if(Math.random()<.5)setTimeout(run,600)}},3500)})();
 </script>
+<button id="btn-fullscreen" class="icon-btn fs-btn" aria-label="Full screen"></button>
+    <!-- Full screen options (grown-up choice) -->
+    <div id="fs-menu" class="overlay hidden top-overlay" role="dialog" aria-modal="true" aria-labelledby="fs-title">
+      <div class="pad-card">
+        <h2 id="fs-title">Full screen</h2>
+        <p class="pad-text">Dad Lock keeps little hands in the game: leaving full screen needs a grown-up PIN.</p>
+        <div class="fs-choices">
+          <button id="fs-locked" class="btn btn-play">🔒 Full screen + Dad Lock</button>
+          <button id="fs-plain" class="btn btn-small">Just full screen</button>
+          <button id="fs-cancel" class="link-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIN keypad / lock screen -->
+    <div id="pad" class="overlay hidden top-overlay" role="dialog" aria-modal="true" aria-labelledby="pad-title">
+      <div class="pad-card">
+        <h2 id="pad-title">Grown-ups only</h2>
+        <p id="pad-msg" class="pad-text" aria-live="polite"></p>
+        <div id="pad-dots" class="pad-dots"></div>
+        <div id="pad-keys" class="pad-keys"></div>
+        <div class="pad-actions">
+          <button id="pad-resume" class="btn btn-play">Back to full screen</button>
+          <button id="pad-cancel" class="btn btn-small">Cancel</button>
+          <button id="pad-forgot" class="link-btn">Forgot PIN?</button>
+        </div>
+      </div>
+    </div>
+<script>
+(()=>{const K='bug-maze:save',BM=window.BugMaze=window.BugMaze||{};let A;
+BM.Save={load(){try{return Object.assign({dadLock:false,pinHash:null},JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){return{dadLock:false,pinHash:null}}},write(d){try{localStorage.setItem(K,JSON.stringify(d))}catch(e){}}};
+BM.Sound={play(t){try{A=A||new AudioContext();const o=A.createOscillator(),g=A.createGain(),n=A.currentTime,f=t=='wrong'?[220,140]:[660,330];o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.12);g.gain.setValueAtTime(.15,n);g.gain.exponentialRampToValueAtTime(.001,n+.14);o.connect(g).connect(A.destination);o.start();o.stop(n+.15)}catch(e){}}};})();
+</script>
+<script src="js/dadlock.js"></script>
+<script>BugMaze.DadLock.init(BugMaze.Save.load())</script>
 </body></html>
