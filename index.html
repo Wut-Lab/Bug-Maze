@@ -1,43 +1,7 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ladybug Maze Blueprint</title>
-<style>
-:root{--bg:#fffaf3;--fg:#2b2b2b;--card:#fff;--line:#e6d9c6;--accent:#d93a2b}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1a17;--fg:#eee;--card:#26231f;--line:#3d372f;--accent:#ff6b5b}}
-:root[data-theme="dark"]{--bg:#1c1a17;--fg:#eee;--card:#26231f;--line:#3d372f;--accent:#ff6b5b}
-body{background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;max-width:720px;margin:24px auto;padding:0 16px;line-height:1.5}
-h1{color:var(--accent)}
-details{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:10px 0;padding:10px 14px}
-details[open] summary{margin-bottom:6px}
-summary{font-weight:600;cursor:pointer}
-</style></head><body>
-<h1>🐞 Ladybug Maze: Blueprint</h1>
-<p>A toddler game where a ladybug (and later other insects) hides through a maze. Art style follows Dino-Match.</p>
-
-<details><summary>1. Concept &amp; Core Loop</summary>
-<ul>
-<li>Toddler drags or taps to guide the ladybug through a simple maze to a hiding spot (a leaf, flower, or log).</li>
-<li>Arrive at the spot → ladybug hides → happy animation + sound → next maze.</li>
-<li>No fail state, no timer. Wrong turns just bump gently.</li>
-</ul></details>
-
-<details><summary>2. Art Style (from Dino-Match)</summary>
-<ul>
-<li>Reuse Dino-Match palette, rounded shapes, thick outlines, and the soft background.</li>
-<li>Characters: ladybug first; later bee, caterpillar, butterfly, ant.</li>
-<li>Maze walls look like hedges or grass so it reads as a garden.</li>
-</ul></details>
-
-<details><summary>3. Toddler UX Rules</summary>
-<ul>
-<li>Big touch targets (at least 60px), paths wide enough for a small finger.</li>
-<li>No reading needed: icons and voice/sound cues only.</li>
-<li>Mazes start very short (2–3 turns) and grow slowly.</li>
-</ul></details>
-
-<details><summary>4. Asset: Ladybug</summary>
-<p>Guide the ladybug through a new random hedge maze to the leaf. Tap to send it, or drag to lead it. Reaching the leaf hides it and builds a slightly bigger maze (3×3 up to 6×6).</p>
-<div id="stage" style="position:relative;height:420px;touch-action:none;overflow:hidden;border-radius:14px;border:6px solid #5a3e22;transition:none;box-shadow:inset 0 0 40px #0004;background:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg stroke-linecap='round' stroke-width='3' fill='none'%3E%3Cpath d='M10 70q2-12 0-20M14 72q4-10 8-16M50 30q-2-12 2-20M54 32q4-8 10-12M66 76q0-10-4-18' stroke='%234f9a33'/%3E%3Cpath d='M30 50q2-10 6-14M72 40q-3-8-1-14M22 20q2-8 0-14' stroke='%2378c04f'/%3E%3C/g%3E%3Ccircle cx='40' cy='66' r='3' fill='%23fff7a8'/%3E%3C/svg%3E&quot;),radial-gradient(circle at 30% 30%,#9ad66a,#5fa83c)">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ladybug Maze</title>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#5fa83c}[hidden]{display:none!important}</style></head><body>
+<div id="stage" hidden style="position:relative;height:100%;touch-action:none;overflow:hidden;border:8px solid #5a3e22;box-sizing:border-box;transition:none;box-shadow:inset 0 0 40px #0004;background:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg stroke-linecap='round' stroke-width='3' fill='none'%3E%3Cpath d='M10 70q2-12 0-20M14 72q4-10 8-16M50 30q-2-12 2-20M54 32q4-8 10-12M66 76q0-10-4-18' stroke='%234f9a33'/%3E%3Cpath d='M30 50q2-10 6-14M72 40q-3-8-1-14M22 20q2-8 0-14' stroke='%2378c04f'/%3E%3C/g%3E%3Ccircle cx='40' cy='66' r='3' fill='%23fff7a8'/%3E%3C/svg%3E&quot;),radial-gradient(circle at 30% 30%,#9ad66a,#5fa83c)">
+<button id="home" aria-label="Main menu" style="position:absolute;z-index:3;right:10px;top:10px;font-size:28px;border:0;border-radius:50%;width:52px;height:52px;background:#fff;box-shadow:0 4px 0 #0004;cursor:pointer">🏠</button>
 <svg id="bug" viewBox="0 0 200 200" width="140" height="140" role="img" aria-label="Ladybug" style="position:absolute;left:20px;top:20px;cursor:grab">
 <defs><radialGradient id="sh" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff7a5c"/><stop offset=".55" stop-color="#e8402f"/><stop offset="1" stop-color="#9e1f14"/></radialGradient><radialGradient id="hd" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#666"/><stop offset="1" stop-color="#1a1a1a"/></radialGradient><radialGradient id="sp" cx=".35" cy=".3" r=".7"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#111"/></radialGradient></defs>
 <style>#bug .a,#bug .b{transform-origin:100px 125px}#bug.walk .a{animation:sw .25s ease-in-out infinite alternate}#bug.walk .b{animation:sw .25s ease-in-out infinite alternate-reverse}@keyframes sw{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}</style>
@@ -74,34 +38,12 @@ if(L>3){const v=Math.min(L,drag?8:4),nx=p.x+dx/L*v,ny=p.y+dy/L*v;if(ok(nx,p.y))p
 else b.classList.remove('walk');
 if(!won&&p.x>cw*(n-1)&&p.y>ch*(n-1)){won=true;b.classList.remove('walk');setTimeout(()=>{n=Math.min(6,n+1);init()},900)}
 b.style.opacity=won?.35:1;b.style.left=p.x-S/2+'px';b.style.top=p.y-S/2+'px';b.style.transform='rotate('+ang+'deg)';requestAnimationFrame(step)}
-const pt=e=>{const r=s.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};init();window.newMaze=()=>{n=3;const d=s.closest('details');if(d.open)init();else d.open=true;d.scrollIntoView({behavior:'smooth'})};s.closest('details').addEventListener('toggle',e=>{if(e.target.open)init()});
-s.addEventListener('pointerdown',e=>{s.setPointerCapture(e.pointerId);drag=true;g=pt(e)});
+const pt=e=>{const r=s.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};init();window.newMaze=()=>{n=3;document.getElementById('menu').hidden=true;s.hidden=false;init()};document.getElementById('home').onclick=e=>{e.stopPropagation();s.hidden=true;document.getElementById('menu').hidden=false};addEventListener('resize',()=>{if(!s.hidden)init()});
+s.addEventListener('pointerdown',e=>{if(e.target.closest('#home'))return;s.setPointerCapture(e.pointerId);drag=true;g=pt(e)});
 s.addEventListener('pointermove',e=>{if(drag)g=pt(e)});
 s.addEventListener('pointerup',()=>{drag=false});step()})();
 </script>
-<ul><li>Pure SVG: scales cleanly, easy to recolor for other insects.</li><li>Draft style. Match to Dino-Match outlines and palette once shared.</li></ul>
-</details>
-
-<details><summary>5. Maze Generator</summary>
-<p>Random maze each time (depth-first "backtracker": always solvable, one path between any two spots). Size grows with level.</p>
-<p><label>Level <input id="lv" type="range" min="2" max="8" value="3"></label> <button id="gen">New maze</button></p>
-<canvas id="mz" style="width:100%;max-width:480px;aspect-ratio:1;border-radius:8px;background:#cfe8b0"></canvas>
-<script>
-(()=>{const c=document.getElementById('mz'),x=c.getContext('2d'),lv=document.getElementById('lv');
-function make(n){const w=[...Array(n*n)].map(()=>[1,1,1,1]),v=new Set([0]),st=[0],D=[[0,-1,0,2],[1,0,1,3],[0,1,2,0],[-1,0,3,1]];
-while(st.length){const i=st[st.length-1],cx=i%n,cy=i/n|0,o=D.filter(([dx,dy])=>{const a=cx+dx,b=cy+dy;return a>=0&&b>=0&&a<n&&b<n&&!v.has(b*n+a)});
-if(!o.length){st.pop();continue}const[dx,dy,s,t]=o[Math.random()*o.length|0],j=(cy+dy)*n+cx+dx;w[i][s]=0;w[j][t]=0;v.add(j);st.push(j)}return w}
-function draw(){const n=+lv.value,S=c.width=c.height=480,k=S/n,w=make(n);x.clearRect(0,0,S,S);
-x.strokeStyle='#3f7d2c';x.lineWidth=k*.18;x.lineCap='round';x.beginPath();
-w.forEach((q,i)=>{const a=i%n*k,b=(i/n|0)*k;if(q[0]){x.moveTo(a,b);x.lineTo(a+k,b)}if(q[1]){x.moveTo(a+k,b);x.lineTo(a+k,b+k)}if(q[2]){x.moveTo(a,b+k);x.lineTo(a+k,b+k)}if(q[3]){x.moveTo(a,b);x.lineTo(a,b+k)}});x.stroke();
-x.font=k*.55+'px serif';x.textAlign='center';x.textBaseline='middle';x.fillText('🐞',k/2,k/2);x.fillText('🍃',S-k/2,S-k/2)}
-document.getElementById('gen').onclick=draw;lv.oninput=draw;draw()})();
-</script>
-<ul><li>Start: top-left. Hiding spot: bottom-right leaf.</li><li>Walls styled as hedges; wide paths for small fingers.</li></ul>
-</details>
-
-<details><summary>6. Main Menu</summary>
-<div id="menu" style="position:relative;height:420px;overflow:hidden;border:6px solid #8a5a2b;border-radius:16px;background:#7cc24a radial-gradient(circle at 30% 20%,#9ad65f,transparent 60%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+<div id="menu" style="position:relative;height:100%;box-sizing:border-box;overflow:hidden;border:6px solid #8a5a2b;background:#7cc24a radial-gradient(circle at 30% 20%,#9ad65f,transparent 60%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@700&display=swap');
 #menu h2{margin:0 0 8px;text-align:center;align-self:center;font:700 3.2rem 'Fredoka',system-ui;letter-spacing:2px;transform:rotate(-3deg);paint-order:stroke fill;z-index:2;color:transparent;background:repeating-linear-gradient(100deg,#2e7d1a 0 3px,#5fbf2f 3px 6px,#3c9a22 6px 8px),linear-gradient(#a5e05a,#2f6b1f);background-blend-mode:multiply;-webkit-background-clip:text;background-clip:text;-webkit-text-stroke:3px #173d0c;filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 5px 0 #173d0c) drop-shadow(0 8px 6px #0005)}
@@ -131,6 +73,4 @@ s.style.cssText=`left:0;top:0;transform:translate(${x0}px,${y}px) rotate(${ang}d
 M.appendChild(s);requestAnimationFrame(()=>requestAnimationFrame(()=>s.style.transform=`translate(${x1}px,${y2}px) rotate(${ang}deg)`));setTimeout(()=>s.remove(),6000)}
 setInterval(()=>{if(M.clientWidth&&!matchMedia('(prefers-reduced-motion: reduce)').matches){run();if(Math.random()<.5)setTimeout(run,600)}},3500)})();
 </script>
-</details>
-
 </body></html>
