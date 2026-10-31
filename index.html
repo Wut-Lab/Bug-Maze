@@ -1,10 +1,18 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Ladybug Maze</title>
 <link rel="stylesheet" href="css/dadlock.css">
-<style>html,body{margin:0;height:100%;overflow:hidden;background:#5fa83c}[hidden]{display:none!important}</style></head><body>
+<script>
+(()=>{const K='bug-maze:save',BM=window.BugMaze=window.BugMaze||{};let A;
+BM.Save={load(){try{return Object.assign({dadLock:false,pinHash:null,stars:0,music:true},JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){return{dadLock:false,pinHash:null,stars:0,music:true}}},write(d){try{localStorage.setItem(K,JSON.stringify(d))}catch(e){}}};
+BM.data=BM.Save.load();BM.save=()=>BM.Save.write(BM.data)})();
+</script>
+
+<script src="js/sound.js"></script>
+<style>html,body{margin:0;user-select:none;-webkit-user-select:none;height:100%;overflow:hidden;background:#5fa83c}[hidden]{display:none!important}</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><radialGradient id="sh" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff7a5c"/><stop offset=".55" stop-color="#e8402f"/><stop offset="1" stop-color="#9e1f14"/></radialGradient><radialGradient id="hd" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#666"/><stop offset="1" stop-color="#1a1a1a"/></radialGradient><radialGradient id="sp" cx=".35" cy=".3" r=".7"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#111"/></radialGradient></defs></svg>
 <div id="stage" hidden style="position:relative;height:100%;touch-action:none;overflow:hidden;border:8px solid #5a3e22;box-sizing:border-box;transition:none;box-shadow:inset 0 0 40px #0004;background:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg stroke-linecap='round' stroke-width='3' fill='none'%3E%3Cpath d='M10 70q2-12 0-20M14 72q4-10 8-16M50 30q-2-12 2-20M54 32q4-8 10-12M66 76q0-10-4-18' stroke='%234f9a33'/%3E%3Cpath d='M30 50q2-10 6-14M72 40q-3-8-1-14M22 20q2-8 0-14' stroke='%2378c04f'/%3E%3C/g%3E%3Ccircle cx='40' cy='66' r='3' fill='%23fff7a8'/%3E%3C/svg%3E&quot;),radial-gradient(circle at 30% 30%,#9ad66a,#5fa83c)">
 <button id="home" aria-label="Main menu" style="position:absolute;z-index:3;right:10px;top:10px;font-size:28px;border:0;border-radius:50%;width:52px;height:52px;background:#fff;box-shadow:0 4px 0 #0004;cursor:pointer">🏠</button>
 <svg id="bug" viewBox="0 0 200 200" width="140" height="140" role="img" aria-label="Ladybug" style="position:absolute;left:20px;top:20px;cursor:grab">
-<defs><radialGradient id="sh" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff7a5c"/><stop offset=".55" stop-color="#e8402f"/><stop offset="1" stop-color="#9e1f14"/></radialGradient><radialGradient id="hd" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#666"/><stop offset="1" stop-color="#1a1a1a"/></radialGradient><radialGradient id="sp" cx=".35" cy=".3" r=".7"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#111"/></radialGradient></defs>
+
 <style>#bug .a,#bug .b{transform-origin:100px 125px}#bug.walk .a{animation:sw .25s ease-in-out infinite alternate}#bug.walk .b{animation:sw .25s ease-in-out infinite alternate-reverse}@keyframes sw{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}</style>
 <g stroke="#2b2b2b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
 <path d="M80 52 Q68 28 56 30 M120 52 Q132 28 144 30" fill="none"/>
@@ -19,29 +27,51 @@
 <circle cx="89" cy="62" r="7" fill="#fff"/><circle cx="111" cy="62" r="7" fill="#fff"/>
 <circle cx="90" cy="63" r="3.5" fill="#2b2b2b"/><circle cx="112" cy="63" r="3.5" fill="#2b2b2b"/>
 <ellipse cx="78" cy="98" rx="14" ry="7" fill="#fff" opacity=".5" transform="rotate(-30 78 98)"/>
-</svg></div>
+</svg>
+<svg id="star" viewBox="0 0 200 200" aria-label="Star" style="position:absolute;pointer-events:none;animation:tw 1s ease-in-out infinite alternate"><defs><radialGradient id="st" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff6a8"/><stop offset=".55" stop-color="#ffd23f"/><stop offset="1" stop-color="#e09a00"/></radialGradient></defs><path d="M100 18 L123 72 L182 76 L136 114 L151 172 L100 140 L49 172 L64 114 L18 76 L77 72Z" fill="url(#st)" stroke="#2b2b2b" stroke-width="7" stroke-linejoin="round"/><ellipse cx="82" cy="78" rx="9" ry="18" fill="#fff" opacity=".55" transform="rotate(30 82 78)"/></svg>
+<div id="pick" hidden role="dialog" aria-label="Pick your ladybug"><div class="pad-card"><h2>Pick your ladybug!</h2><div id="swatches"></div></div></div>
+<style>@keyframes tw{to{transform:scale(1.15) rotate(12deg)}}
+#pick{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:#3d2c4e73;padding:16px}
+#swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px;justify-items:center}
+#swatches button{width:72px;height:72px;border-radius:50%;border:5px solid #3d2c4e;box-shadow:0 6px 0 #3d2c4e;cursor:pointer;position:relative;transition:transform .08s}
+#swatches button:active{transform:translateY(5px);box-shadow:0 1px 0 #3d2c4e}
+#swatches button::before,#swatches button::after{content:"";position:absolute;width:13px;height:13px;border-radius:50%;background:#1a1a1a;top:20px;left:14px;box-shadow:24px 0 #1a1a1a,10px 20px #1a1a1a}
+#swatches button::after{display:none}
+#music{position:fixed;left:76px;top:10px;z-index:120}
+#score{z-index:2;font:700 1.3rem 'Fredoka',system-ui;color:#3d2c4e;background:#fff3c4;border:4px solid #3d2c4e;border-radius:999px;padding:4px 16px;box-shadow:0 4px 0 #3d2c4e}
+</style>
+</div>
 <script>
 (()=>{const s=document.getElementById('stage'),b=document.getElementById('bug'),cv=document.createElement('canvas'),x=cv.getContext('2d');
 cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';s.prepend(cv);
-let n=3,w,cw,ch,R,S,p,g=null,drag=false,ang=0,won=false;
+let n=3,w,cw,ch,R,S,p,g=null,drag=false,ang=0,won=false,sp,got,lastStep=0,lastBump=0;
+const BM=window.BugMaze,st=document.getElementById('star'),pk=document.getElementById('pick'),sh=document.querySelectorAll('#sh stop');
+const COL={Red:['#ff7a5c','#e8402f','#9e1f14'],Blue:['#7ab8ff','#2f7de8','#14449e'],Yellow:['#fff27a','#f2c81f','#a8820a'],Pink:['#ffb3d6','#ff6fae','#b8336f'],Orange:['#ffb066','#f57c1f','#a84a0a'],Purple:['#c99bff','#8e4fe0','#53209e']};
+const sw=document.getElementById('swatches');Object.entries(COL).forEach(([k,c])=>{const t=document.createElement('button');t.setAttribute('aria-label',k);t.style.background=`radial-gradient(circle at 35% 30%,${c[0]},${c[1]} 55%,${c[2]})`;
+t.onclick=e=>{e.stopPropagation();BM.Sound.play('tap');c.forEach((v,i)=>sh[i].setAttribute('stop-color',v));BM.data.color=k;BM.save();pk.hidden=true;drag=false;g=null};sw.appendChild(t)});
+if(BM.data.color&&COL[BM.data.color])COL[BM.data.color].forEach((v,i)=>sh[i].setAttribute('stop-color',v));
+const pick=()=>{pk.hidden=false;drag=false;g=null};
 function make(n){const w=[...Array(n*n)].map(()=>[1,1,1,1]),v=new Set([0]),st=[0],D=[[0,-1,0,2],[1,0,1,3],[0,1,2,0],[-1,0,3,1]];
 while(st.length){const i=st[st.length-1],cx=i%n,cy=i/n|0,o=D.filter(([dx,dy])=>{const a=cx+dx,c=cy+dy;return a>=0&&c>=0&&a<n&&c<n&&!v.has(c*n+a)});
 if(!o.length){st.pop();continue}const[dx,dy,k,t]=o[Math.random()*o.length|0],j=(cy+dy)*n+cx+dx;w[i][k]=0;w[j][t]=0;v.add(j);st.push(j)}return w}
 const lf=new Image();lf.src='data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><radialGradient id="l" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#b6ef6a"/><stop offset=".55" stop-color="#5cbf2e"/><stop offset="1" stop-color="#2c7a16"/></radialGradient></defs><g stroke="#2b2b2b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M100 182 V196" fill="none"/><path d="M100 182 C30 160 28 70 100 14 C172 70 170 160 100 182Z" fill="url(#l)"/><path d="M100 176 V40 M100 140 L70 112 M100 140 L130 112 M100 104 L76 82 M100 104 L124 82" fill="none" stroke-width="4" stroke="#2c6a16"/></g><ellipse cx="74" cy="90" rx="10" ry="26" fill="#fff" opacity=".45" transform="rotate(20 74 90)"/></svg>`);lf.onload=()=>{if(w)init()};
 function init(){const W=cv.width=s.clientWidth,Hh=cv.height=s.clientHeight;cw=W/n;ch=Hh/n;R=Math.min(cw,ch)*.3;S=R*2.4;w=make(n);
 b.setAttribute('width',S);b.setAttribute('height',S);p={x:cw/2,y:ch/2};g=null;won=false;
+const k=1+Math.random()*(n*n-2)|0;sp={x:(k%n+.5)*cw,y:((k/n|0)+.5)*ch};got=false;const Z=R*1.8;st.style.cssText+=`;display:block;width:${Z}px;height:${Z}px;left:${sp.x-Z/2}px;top:${sp.y-Z/2}px`;
 x.strokeStyle='#2f6b1f';x.lineWidth=Math.min(cw,ch)*.14;x.lineCap='round';x.beginPath();
 w.forEach((q,i)=>{const a=i%n*cw,c=(i/n|0)*ch;if(q[0]){x.moveTo(a,c);x.lineTo(a+cw,c)}if(q[1]){x.moveTo(a+cw,c);x.lineTo(a+cw,c+ch)}if(q[2]){x.moveTo(a,c+ch);x.lineTo(a+cw,c+ch)}if(q[3]){x.moveTo(a,c);x.lineTo(a,c+ch)}});x.stroke();
 const L=R*2.6;x.save();x.translate(W-cw/2,Hh-ch/2);x.rotate(-.35);x.drawImage(lf,-L/2,-L/2,L,L);x.restore()}
 function ok(X,Y){const i=Math.min(n-1,X/cw|0),j=Math.min(n-1,Y/ch|0),q=w[j*n+i],m=R*.9,lx=X-i*cw,ly=Y-j*ch,ex=lx<m||lx>cw-m,ey=ly<m||ly>ch-m;
 return X>0&&Y>0&&!(q[0]&&ly<m||q[2]&&ly>ch-m||q[3]&&lx<m||q[1]&&lx>cw-m||ex&&ey)}
 function step(){if(g&&!won){const dx=g.x-p.x,dy=g.y-p.y,L=Math.hypot(dx,dy);
-if(L>3){const v=Math.min(L,drag?8:4),nx=p.x+dx/L*v,ny=p.y+dy/L*v;if(ok(nx,p.y))p.x=nx;if(ok(p.x,ny))p.y=ny;ang=Math.atan2(dx,-dy)*180/Math.PI;b.classList.add('walk')}else{if(!drag)g=null;b.classList.remove('walk')}}
+if(L>3){const v=Math.min(L,drag?8:4),nx=p.x+dx/L*v,ny=p.y+dy/L*v,ox=p.x,oy=p.y,T=performance.now();if(ok(nx,p.y))p.x=nx;if(ok(p.x,ny))p.y=ny;const mv=Math.hypot(p.x-ox,p.y-oy);
+if(mv<v*.3){if(T-lastBump>450){lastBump=T;BM.Sound.play('bump')}if(!drag)g=null}else if(T-lastStep>230){lastStep=T;BM.Sound.play('step')}ang=Math.atan2(dx,-dy)*180/Math.PI;b.classList.add('walk')}else{if(!drag)g=null;b.classList.remove('walk')}}
 else b.classList.remove('walk');
-if(!won&&p.x>cw*(n-1)&&p.y>ch*(n-1)){won=true;b.classList.remove('walk');setTimeout(()=>{n=Math.min(6,n+1);init()},900)}
+if(!got&&Math.hypot(p.x-sp.x,p.y-sp.y)<R*1.3){got=true;st.style.display='none';BM.Sound.play('star');BM.data.stars=(BM.data.stars||0)+1;BM.save();BM.showStars()}
+if(!won&&p.x>cw*(n-1)&&p.y>ch*(n-1)){won=true;b.classList.remove('walk');BM.Sound.play('leaf');setTimeout(()=>{n=Math.min(6,n+1);init();pick()},900)}
 b.style.opacity=won?.35:1;b.style.left=p.x-S/2+'px';b.style.top=p.y-S/2+'px';b.style.transform='rotate('+ang+'deg)';requestAnimationFrame(step)}
-const pt=e=>{const r=s.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};init();window.newMaze=()=>{n=3;document.getElementById('menu').hidden=true;s.hidden=false;init()};document.getElementById('home').onclick=e=>{e.stopPropagation();s.hidden=true;document.getElementById('menu').hidden=false};addEventListener('resize',()=>{if(!s.hidden)init()});
-s.addEventListener('pointerdown',e=>{if(e.target.closest('#home'))return;s.setPointerCapture(e.pointerId);drag=true;g=pt(e)});
+const pt=e=>{const r=s.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};init();window.newMaze=()=>{n=3;document.getElementById('menu').hidden=true;s.hidden=false;init();pick()};document.getElementById('home').onclick=e=>{e.stopPropagation();s.hidden=true;document.getElementById('menu').hidden=false;BM.showStars()};addEventListener('resize',()=>{if(!s.hidden)init()});
+s.addEventListener('pointerdown',e=>{if(e.target.closest('#home,#pick'))return;s.setPointerCapture(e.pointerId);drag=true;g=pt(e)});
 s.addEventListener('pointermove',e=>{if(drag)g=pt(e)});
 s.addEventListener('pointerup',()=>{drag=false});step()})();
 </script>
@@ -60,13 +90,14 @@ s.addEventListener('pointerup',()=>{drag=false});step()})();
 .mb .a,.mb .b{transform-origin:100px 125px}.mb .a{animation:sw .2s infinite alternate}.mb .b{animation:sw .2s infinite alternate-reverse}
 </style>
 <h2>Ladybug Maz<span class="e">e</span></h2>
+<div id="score" aria-live="polite">⭐ Stars Collected: <span id="stars">0</span></div>
 <button class="mbtn">▶ Play</button>
 <button class="mbtn g">★ Collections</button>
 <button class="mbtn b">♥ Credits</button>
 </div>
 <script>
-(()=>{const M=document.getElementById('menu');let A;
-const tap=()=>{try{A=A||new AudioContext();const o=A.createOscillator(),g=A.createGain();o.frequency.setValueAtTime(660,A.currentTime);o.frequency.exponentialRampToValueAtTime(330,A.currentTime+.08);g.gain.setValueAtTime(.15,A.currentTime);g.gain.exponentialRampToValueAtTime(.001,A.currentTime+.1);o.connect(g).connect(A.destination);o.start();o.stop(A.currentTime+.1)}catch(e){}};
+(()=>{const M=document.getElementById('menu');BugMaze.showStars=()=>document.getElementById('stars').textContent=BugMaze.data.stars||0;BugMaze.showStars();
+const tap=()=>BugMaze.Sound.play('tap');
 {const t=document.getElementById('bug').cloneNode(true);t.removeAttribute('id');t.removeAttribute('style');t.setAttribute('class','tb');t.setAttribute('aria-hidden','true');M.querySelector('h2 .e').appendChild(t)}
 M.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{tap();if(b.textContent.includes('Play'))setTimeout(()=>newMaze(),150);b.classList.add('p');setTimeout(()=>b.classList.remove('p'),120)});
 function run(){const s=document.getElementById('bug').cloneNode(true);s.removeAttribute('id');s.setAttribute('class','mb');s.setAttribute('aria-hidden','true');s.removeAttribute('style');s.setAttribute('width',50);s.setAttribute('height',50);
@@ -75,6 +106,10 @@ s.style.cssText=`left:0;top:0;transform:translate(${x0}px,${y}px) rotate(${ang}d
 M.appendChild(s);requestAnimationFrame(()=>requestAnimationFrame(()=>s.style.transform=`translate(${x1}px,${y2}px) rotate(${ang}deg)`));setTimeout(()=>s.remove(),6000)}
 setInterval(()=>{if(M.clientWidth&&!matchMedia('(prefers-reduced-motion: reduce)').matches){run();if(Math.random()<.5)setTimeout(run,600)}},3500)})();
 </script>
+<button id="music" class="icon-btn" aria-label="Music on/off">🎵</button>
+<script>(()=>{const BM=BugMaze,m=document.getElementById('music'),show=()=>{m.textContent=BM.data.music?'🎵':'🔇';m.setAttribute('aria-pressed',BM.data.music)};show();
+m.onclick=e=>{e.stopPropagation();BM.data.music=!BM.data.music;BM.save();BM.data.music?BM.Music.start():BM.Music.stop();show()};
+addEventListener('pointerdown',()=>{if(BM.data.music)BM.Music.start()},{once:true})})()</script>
 <button id="btn-fullscreen" class="icon-btn fs-btn" aria-label="Full screen"></button>
     <!-- Full screen options (grown-up choice) -->
     <div id="fs-menu" class="overlay hidden top-overlay" role="dialog" aria-modal="true" aria-labelledby="fs-title">
@@ -103,11 +138,6 @@ setInterval(()=>{if(M.clientWidth&&!matchMedia('(prefers-reduced-motion: reduce)
         </div>
       </div>
     </div>
-<script>
-(()=>{const K='bug-maze:save',BM=window.BugMaze=window.BugMaze||{};let A;
-BM.Save={load(){try{return Object.assign({dadLock:false,pinHash:null},JSON.parse(localStorage.getItem(K)||'{}'))}catch(e){return{dadLock:false,pinHash:null}}},write(d){try{localStorage.setItem(K,JSON.stringify(d))}catch(e){}}};
-BM.Sound={play(t){try{A=A||new AudioContext();const o=A.createOscillator(),g=A.createGain(),n=A.currentTime,f=t=='wrong'?[220,140]:[660,330];o.frequency.setValueAtTime(f[0],n);o.frequency.exponentialRampToValueAtTime(f[1],n+.12);g.gain.setValueAtTime(.15,n);g.gain.exponentialRampToValueAtTime(.001,n+.14);o.connect(g).connect(A.destination);o.start();o.stop(n+.15)}catch(e){}}};})();
-</script>
 <script src="js/dadlock.js"></script>
-<script>BugMaze.DadLock.init(BugMaze.Save.load())</script>
+<script>BugMaze.DadLock.init(BugMaze.data)</script>
 </body></html>
