@@ -10,6 +10,7 @@ BM.data=BM.Save.load();BM.save=()=>BM.Save.write(BM.data)})();
 <script src="js/buddies.js"></script>
 <script src="js/flowers.js"></script>
 <script src="js/walls.js"></script>
+<script src="js/menucritters.js"></script>
 <style>html,body{margin:0;user-select:none;-webkit-user-select:none;height:100%;overflow:hidden;background:#5fa83c}[hidden]{display:none!important}</style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><radialGradient id="sh" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff7a5c"/><stop offset=".55" stop-color="#e8402f"/><stop offset="1" stop-color="#9e1f14"/></radialGradient><radialGradient id="hd" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#666"/><stop offset="1" stop-color="#1a1a1a"/></radialGradient><radialGradient id="sp" cx=".35" cy=".3" r=".7"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#111"/></radialGradient></defs></svg>
 <div id="stage" hidden style="position:relative;height:100%;touch-action:none;overflow:hidden;border:8px solid #5a3e22;box-sizing:border-box;transition:none;box-shadow:inset 0 0 40px #0004;background:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg stroke-linecap='round' stroke-width='3' fill='none'%3E%3Cpath d='M10 70q2-12 0-20M14 72q4-10 8-16M50 30q-2-12 2-20M54 32q4-8 10-12M66 76q0-10-4-18' stroke='%234f9a33'/%3E%3Cpath d='M30 50q2-10 6-14M72 40q-3-8-1-14M22 20q2-8 0-14' stroke='%2378c04f'/%3E%3C/g%3E%3Ccircle cx='40' cy='66' r='3' fill='%23fff7a8'/%3E%3C/svg%3E&quot;),radial-gradient(circle at 30% 30%,#9ad66a,#5fa83c)">
@@ -117,8 +118,14 @@ s.addEventListener('pointerup',()=>{drag=false});step()})();
 .mbtn.b{background:linear-gradient(#64b5f6,#1976d2);box-shadow:0 7px 0 #0d4a8f,0 10px 12px #0004}
 .mbtn:active,.mbtn.p{transform:translateY(6px) scale(.97);box-shadow:0 1px 0 #0006,0 2px 4px #0004}
 .mbtn:focus-visible{outline:4px solid #fff}
-.mb{position:absolute;z-index:1;pointer-events:none}
-.mb .a,.mb .b{transform-origin:100px 125px}.mb .a{animation:sw .2s infinite alternate}.mb .b{animation:sw .2s infinite alternate-reverse}
+.mb,.mi{position:absolute;left:0;top:0;z-index:1;cursor:pointer;touch-action:none}
+.mi{animation:popin .4s cubic-bezier(.3,1.6,.5,1)}.mi.bye{animation:popout .4s forwards}
+.critter.wig{animation:wig .5s ease-in-out}.mi.wig{animation:wig .5s ease-in-out}
+@keyframes wig{20%{rotate:-14deg}40%{rotate:12deg}60%{rotate:-8deg}80%{rotate:5deg}}
+@keyframes popin{from{scale:0}}@keyframes popout{to{scale:0;opacity:0}}
+#menu .mbtn,#menu #score{transition:opacity .35s,filter .35s,transform .08s,box-shadow .08s}
+#menu.faded .mbtn,#menu.faded #score{opacity:.3;filter:saturate(.4)}
+.mb .a,.mb .b{transform-origin:100px 125px}.mb.walk .a{animation:sw .2s infinite alternate}.mb.walk .b{animation:sw .2s infinite alternate-reverse}
 </style>
 <h2>Ladybug Maz<span class="e">e</span></h2>
 <div id="score" aria-live="polite">⭐ Stars Collected: <span id="stars">0</span></div>
@@ -138,11 +145,12 @@ document.addEventListener('click',e=>{const q=e.target.closest('#tabs button');i
 const tap=()=>BugMaze.Sound.play('tap');
 {const t=document.getElementById('bug').cloneNode(true);t.removeAttribute('id');t.removeAttribute('style');t.setAttribute('class','tb');t.setAttribute('aria-hidden','true');M.querySelector('h2 .e').appendChild(t)}
 M.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{tap();if(b.textContent.includes('Play'))setTimeout(()=>newMaze(),150);if(b.textContent.includes('Collections')){book('b');document.getElementById('coll').classList.remove('hidden')}b.classList.add('p');setTimeout(()=>b.classList.remove('p'),120)});
-function run(){const F=Object.keys(BugMaze.data.buddies||{}),q=F.length&&Math.random()<.4?BugMaze.Buddies.find(z=>z.id==F[Math.random()*F.length|0]):null;let s=document.getElementById('bug').cloneNode(true);if(q){s=new DOMParser().parseFromString(uid(q.svg,'mn'+Math.random().toString(36).slice(2,7)),'image/svg+xml').documentElement;s.dataset.b=1}s.removeAttribute('id');s.setAttribute('class','mb');s.setAttribute('aria-hidden','true');s.removeAttribute('style');s.setAttribute('width',50);s.setAttribute('height',50);
-const W=M.clientWidth,H=M.clientHeight,l=Math.random()<.5,y=20+Math.random()*(H-90),y2=20+Math.random()*(H-90),x0=l?-60:W+10,x1=l?W+10:-60,ang=s.dataset.b?0:Math.atan2(y2-y,x1-x0)*180/Math.PI+90;
-s.style.cssText=`left:0;top:0;transform:translate(${x0}px,${y}px) rotate(${ang}deg);transition:transform ${3+Math.random()*2}s linear`;
-M.appendChild(s);requestAnimationFrame(()=>requestAnimationFrame(()=>s.style.transform=`translate(${x1}px,${y2}px) rotate(${ang}deg)`));setTimeout(()=>s.remove(),6000)}
-setInterval(()=>{if(M.clientWidth&&!matchMedia('(prefers-reduced-motion: reduce)').matches){run();if(Math.random()<.5)setTimeout(run,600)}},3500)})();
+BugMaze.MenuCritters.start(M);
+// Playing with the grass fades the buttons out of the way (and switches them off). Tapping a faded button brings them back.
+const fade=on=>M.classList.toggle('faded',on);
+M.addEventListener('pointerdown',e=>{if(!e.target.closest('.mbtn,#score,h2'))fade(true)});
+M.addEventListener('click',e=>{if(!M.classList.contains('faded')||!e.target.closest('.mbtn,#score'))return;e.stopPropagation();e.preventDefault();fade(false);tap()},{capture:true});
+})();
 </script>
 <div id="coll" class="overlay hidden top-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-t"><div class="pad-card"><h2 id="coll-t">Collections</h2><div id="tabs" role="tablist"><button role="tab" data-t="b">🐞 Bug Buddies</button><button role="tab" data-t="f">🌷 Flowers</button></div><div id="coll-c" class="tally"></div><p class="pad-text" id="coll-n"></p><div id="book"></div><button id="coll-x" class="btn btn-small">Done</button></div></div>
 <button id="music" class="icon-btn" aria-label="Music on/off">🎵</button>
