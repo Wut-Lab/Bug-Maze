@@ -27,12 +27,15 @@
     flower: () => [659, 831, 988, 1319].forEach((f, i) => tone(f, f, 0.3, 'sine', 0.1, i * 0.05)),
     soft: () => tone(520, 380, 0.07, 'sine', 0.08),
     yay: () => {
-      // A real "Yay!" where the browser can speak; a cheerful whoop otherwise.
-      try {
-        const u = new SpeechSynthesisUtterance('Yay!');
-        u.pitch = 1.8; u.rate = 1.1; u.volume = 0.9;
-        speechSynthesis.speak(u);
-      } catch (e) { tone(500, 900, 0.3, 'triangle', 0.15); }
+      // A few quick claps: short bursts of filtered noise.
+      const a = ctx(); if (!a) return;
+      const buf = a.createBuffer(1, a.sampleRate * 0.08, a.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+      [0, 0.22, 0.44, 0.58, 0.72].forEach((t) => {
+        const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+        src.buffer = buf; f.type = 'bandpass'; f.frequency.value = 1400 + Math.random() * 400; g.gain.value = 0.7;
+        src.connect(f).connect(g).connect(a.destination); src.start(a.currentTime + t);
+      });
     },
     star: () => [1047, 1319, 1568, 2093].forEach((f, i) => tone(f, f, 0.15, 'sine', 0.12, i * 0.06)),
   };
