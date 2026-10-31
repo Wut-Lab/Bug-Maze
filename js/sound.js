@@ -23,6 +23,7 @@
     step: () => tone(150, 110, 0.06, 'triangle', 0.12),
     bump: () => { tone(120, 50, 0.18, 'sine', 0.4); tone(80, 40, 0.12, 'triangle', 0.2); },
     leaf: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, f * 1.01, 0.18, 'triangle', 0.18, i * 0.09)),
+    buddy: () => [784, 988, 1175, 988, 1319].forEach((f, i) => tone(f, f * 1.05, 0.12, 'square', 0.06, i * 0.07)),
     star: () => [1047, 1319, 1568, 2093].forEach((f, i) => tone(f, f, 0.15, 'sine', 0.12, i * 0.06)),
   };
   BM.Sound = { play: (name) => SFX[name] && SFX[name]() };
