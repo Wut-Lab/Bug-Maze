@@ -8,6 +8,8 @@ BM.data=BM.Save.load();BM.save=()=>BM.Save.write(BM.data)})();
 
 <script src="js/sound.js"></script>
 <script src="js/buddies.js"></script>
+<script src="js/flowers.js"></script>
+<script src="js/walls.js"></script>
 <style>html,body{margin:0;user-select:none;-webkit-user-select:none;height:100%;overflow:hidden;background:#5fa83c}[hidden]{display:none!important}</style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><radialGradient id="sh" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff7a5c"/><stop offset=".55" stop-color="#e8402f"/><stop offset="1" stop-color="#9e1f14"/></radialGradient><radialGradient id="hd" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#666"/><stop offset="1" stop-color="#1a1a1a"/></radialGradient><radialGradient id="sp" cx=".35" cy=".3" r=".7"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#111"/></radialGradient></defs></svg>
 <div id="stage" hidden style="position:relative;height:100%;touch-action:none;overflow:hidden;border:8px solid #5a3e22;box-sizing:border-box;transition:none;box-shadow:inset 0 0 40px #0004;background:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg stroke-linecap='round' stroke-width='3' fill='none'%3E%3Cpath d='M10 70q2-12 0-20M14 72q4-10 8-16M50 30q-2-12 2-20M54 32q4-8 10-12M66 76q0-10-4-18' stroke='%234f9a33'/%3E%3Cpath d='M30 50q2-10 6-14M72 40q-3-8-1-14M22 20q2-8 0-14' stroke='%2378c04f'/%3E%3C/g%3E%3Ccircle cx='40' cy='66' r='3' fill='%23fff7a8'/%3E%3C/svg%3E&quot;),radial-gradient(circle at 30% 30%,#9ad66a,#5fa83c)">
@@ -30,7 +32,7 @@ BM.data=BM.Save.load();BM.save=()=>BM.Save.write(BM.data)})();
 <ellipse cx="78" cy="98" rx="14" ry="7" fill="#fff" opacity=".5" transform="rotate(-30 78 98)"/>
 </svg>
 <svg id="star" viewBox="0 0 200 200" aria-label="Star" style="position:absolute;pointer-events:none;animation:tw 1s ease-in-out infinite alternate"><defs><radialGradient id="st" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff6a8"/><stop offset=".55" stop-color="#ffd23f"/><stop offset="1" stop-color="#e09a00"/></radialGradient></defs><path d="M100 18 L123 72 L182 76 L136 114 L151 172 L100 140 L49 172 L64 114 L18 76 L77 72Z" fill="url(#st)" stroke="#2b2b2b" stroke-width="7" stroke-linejoin="round"/><ellipse cx="82" cy="78" rx="9" ry="18" fill="#fff" opacity=".55" transform="rotate(30 82 78)"/></svg>
-<div id="buddy" aria-hidden="true"></div><div id="toast" aria-live="polite"></div>
+<div id="buddy" aria-hidden="true"></div><div id="flower" role="button" aria-label="Flower"></div><div id="toast" aria-live="polite"></div>
 <div id="pick" hidden role="dialog" aria-label="Pick your ladybug"><div class="pad-card"><h2>Pick your ladybug!</h2><div id="swatches"></div></div></div>
 <style>@keyframes tw{to{transform:scale(1.15) rotate(12deg)}}
 #pick{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:#3d2c4e73;padding:16px}
@@ -41,6 +43,13 @@ BM.data=BM.Save.load();BM.save=()=>BM.Save.write(BM.data)})();
 #swatches button::after{display:none}
 #buddy{position:absolute;pointer-events:none;display:none;animation:snooze 1.6s ease-in-out infinite alternate}
 #buddy svg{width:100%;height:100%;display:block}#buddy::after{content:"z z";position:absolute;right:-6px;top:-14px;font:700 16px 'Fredoka',sans-serif;color:#3d2c4e}
+#flower{position:absolute;z-index:2;display:none;cursor:pointer;animation:sway 1.4s ease-in-out infinite alternate}
+#flower svg{width:100%;height:100%;display:block;pointer-events:none}
+#flower.new{filter:drop-shadow(0 0 6px #ffd23f) drop-shadow(0 0 3px #ffe680)}
+#flower.seen,#buddy.seen{filter:drop-shadow(0 0 6px #9a9a9a) drop-shadow(0 0 2px #c8c8c8)}
+#flower.awake{animation:wake .7s ease-out forwards;pointer-events:none}
+@keyframes sway{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+#tabs{display:flex;gap:8px;justify-content:center;margin-top:10px}#tabs button{font:700 1rem 'Fredoka',sans-serif;color:#3d2c4e;background:#fff;border:4px solid #3d2c4e;border-radius:999px;padding:6px 14px;box-shadow:0 4px 0 #3d2c4e;cursor:pointer}#tabs button[aria-selected=true]{background:#ffd23f}
 #buddy.awake{animation:wake .7s ease-out forwards}#buddy.awake::after{content:none}
 @keyframes snooze{to{transform:scale(.94,1.04)}}@keyframes wake{30%{transform:translateY(-30%) scale(1.2)}100%{transform:translateY(-60%) scale(.4);opacity:0}}
 #toast{position:absolute;left:50%;bottom:24px;transform:translateX(-50%) scale(0);z-index:4;background:#fffaf0;border:5px solid #3d2c4e;border-radius:999px;box-shadow:0 5px 0 #3d2c4e;padding:6px 18px;font:700 1.2rem 'Fredoka',sans-serif;color:#3d2c4e;white-space:nowrap;transition:transform .25s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
@@ -56,12 +65,14 @@ BM.data=BM.Save.load();BM.save=()=>BM.Save.write(BM.data)})();
 <script>
 (()=>{const s=document.getElementById('stage'),b=document.getElementById('bug'),cv=document.createElement('canvas'),x=cv.getContext('2d');
 cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';s.prepend(cv);
-let n=3,w,cw,ch,R,S,p,g=null,drag=false,ang=0,won=false,sp,got,bd=null,lastStep=0,lastBump=0;
-const BM=window.BugMaze,bu=document.getElementById('buddy'),to=document.getElementById('toast'),st=document.getElementById('star'),pk=document.getElementById('pick'),sh=document.querySelectorAll('#sh stop');
+let n=3,w,cw,ch,R,S,p,g=null,drag=false,ang=0,won=false,sp,got,bd=null,fd=null,lastStep=0,lastBump=0;
+const BM=window.BugMaze,fl=document.getElementById('flower'),bu=document.getElementById('buddy'),to=document.getElementById('toast'),st=document.getElementById('star'),pk=document.getElementById('pick'),sh=document.querySelectorAll('#sh stop');
 const COL={Red:['#ff7a5c','#e8402f','#9e1f14'],Blue:['#7ab8ff','#2f7de8','#14449e'],Yellow:['#fff27a','#f2c81f','#a8820a'],Pink:['#ffb3d6','#ff6fae','#b8336f'],Orange:['#ffb066','#f57c1f','#a84a0a'],Purple:['#c99bff','#8e4fe0','#53209e']};
 const sw=document.getElementById('swatches');Object.entries(COL).forEach(([k,c])=>{const t=document.createElement('button');t.setAttribute('aria-label',k);t.style.background=`radial-gradient(circle at 35% 30%,${c[0]},${c[1]} 55%,${c[2]})`;
 t.onclick=e=>{e.stopPropagation();BM.Sound.play('tap');c.forEach((v,i)=>sh[i].setAttribute('stop-color',v));BM.data.color=k;BM.save();pk.hidden=true;drag=false;g=null};sw.appendChild(t)});
 if(BM.data.color&&COL[BM.data.color])COL[BM.data.color].forEach((v,i)=>sh[i].setAttribute('stop-color',v));
+const say=t=>{to.textContent=t;to.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>to.classList.remove('on'),2200)};
+fl.addEventListener('pointerdown',e=>{e.stopPropagation();if(!fd||fl.classList.contains('awake'))return;BM.Sound.play('flower');const F=BM.data.flowers||{};say(F[fd.id]?'WOW!':'You found a '+fd.name+'!');F[fd.id]=true;BM.data.flowers=F;BM.save();fl.classList.add('awake')});
 const pick=()=>{pk.hidden=false;drag=false;g=null};
 function make(n){const w=[...Array(n*n)].map(()=>[1,1,1,1]),v=new Set([0]),st=[0],D=[[0,-1,0,2],[1,0,1,3],[0,1,2,0],[-1,0,3,1]];
 while(st.length){const i=st[st.length-1],cx=i%n,cy=i/n|0,o=D.filter(([dx,dy])=>{const a=cx+dx,c=cy+dy;return a>=0&&c>=0&&a<n&&c<n&&!v.has(c*n+a)});
@@ -71,10 +82,13 @@ function init(){const W=cv.width=s.clientWidth,Hh=cv.height=s.clientHeight;cw=W/
 b.setAttribute('width',S);b.setAttribute('height',S);p={x:cw/2,y:ch/2};g=null;won=false;
 const k=1+Math.random()*(n*n-2)|0;bd=null;bu.className='';bu.style.display='none';
 const de=w.map((q,i)=>i).filter(i=>i&&i!=n*n-1&&i!=k&&w[i].reduce((a,v)=>a+v,0)==3);
-if(de.length&&Math.random()<1/3){const F=BM.data.buddies||{},all=BM.Buddies,un=all.filter(q=>!F[q.id]),pool=un.length?un:all,c=de[Math.random()*de.length|0],Z=R*2.3;
-bd={...pool[Math.random()*pool.length|0],x:(c%n+.5)*cw,y:((c/n|0)+.5)*ch};bu.innerHTML=bd.svg;bu.style.cssText=`display:block;width:${Z}px;height:${Z}px;left:${bd.x-Z/2}px;top:${bd.y-Z/2}px`}sp={x:(k%n+.5)*cw,y:((k/n|0)+.5)*ch};got=false;const Z=R*1.8;st.style.cssText+=`;display:block;width:${Z}px;height:${Z}px;left:${sp.x-Z/2}px;top:${sp.y-Z/2}px`;
-x.strokeStyle='#2f6b1f';x.lineWidth=Math.min(cw,ch)*.14;x.lineCap='round';x.beginPath();
-w.forEach((q,i)=>{const a=i%n*cw,c=(i/n|0)*ch;if(q[0]){x.moveTo(a,c);x.lineTo(a+cw,c)}if(q[1]){x.moveTo(a+cw,c);x.lineTo(a+cw,c+ch)}if(q[2]){x.moveTo(a,c+ch);x.lineTo(a+cw,c+ch)}if(q[3]){x.moveTo(a,c);x.lineTo(a,c+ch)}});x.stroke();
+if(de.length&&Math.random()<1/3){const F=BM.data.buddies||{},all=BM.Buddies,pool=all,c=de[Math.random()*de.length|0],Z=R*2.3;
+bd={...pool[Math.random()*pool.length|0],x:(c%n+.5)*cw,y:((c/n|0)+.5)*ch};bu.innerHTML=bd.svg;bu.className=F[bd.id]?'seen':'';bu.style.cssText=`display:block;width:${Z}px;height:${Z}px;left:${bd.x-Z/2}px;top:${bd.y-Z/2}px`}sp={x:(k%n+.5)*cw,y:((k/n|0)+.5)*ch};got=false;const Z=R*1.8;st.style.cssText+=`;display:block;width:${Z}px;height:${Z}px;left:${sp.x-Z/2}px;top:${sp.y-Z/2}px`;
+const sg=[];
+w.forEach((q,i)=>{const a=i%n*cw,c=(i/n|0)*ch;if(q[0])sg.push([a,c,a+cw,c]);if(q[1])sg.push([a+cw,c,a+cw,c+ch]);if(q[2])sg.push([a,c+ch,a+cw,c+ch]);if(q[3])sg.push([a,c,a,c+ch])});
+const lw=Math.min(cw,ch)*.14,ws=BM.Walls.styles;BM.Walls.draw(x,sg,lw,ws[Math.random()*ws.length|0]);
+fl.className='';fl.style.display='none';fd=null;const inn=sg.filter(([a,c,e,f])=>!(a==e&&(a<1||a>W-1)||c==f&&(c<1||c>Hh-1)));
+if(inn.length&&Math.random()<.2){const [a,c,e,f]=inn[Math.random()*inn.length|0],F=BM.data.flowers||{},Z=R*2;fd=BM.Flowers[Math.random()*BM.Flowers.length|0];fl.innerHTML=fd.svg;fl.className=F[fd.id]?'seen':'new';fl.style.cssText=`display:block;width:${Z}px;height:${Z}px;left:${(a+e)/2-Z/2}px;top:${(c+f)/2-Z*.75}px`}
 const L=R*2.6;x.save();x.translate(W-cw/2,Hh-ch/2);x.rotate(-.35);x.drawImage(lf,-L/2,-L/2,L,L);x.restore()}
 function ok(X,Y){const i=Math.min(n-1,X/cw|0),j=Math.min(n-1,Y/ch|0),q=w[j*n+i],m=R*.9,lx=X-i*cw,ly=Y-j*ch,ex=lx<m||lx>cw-m,ey=ly<m||ly>ch-m;
 return X>0&&Y>0&&!(q[0]&&ly<m||q[2]&&ly>ch-m||q[3]&&lx<m||q[1]&&lx>cw-m||ex&&ey)}
@@ -82,12 +96,12 @@ function step(){if(g&&!won){const dx=g.x-p.x,dy=g.y-p.y,L=Math.hypot(dx,dy);
 if(L>3){const v=Math.min(L,drag?8:4),nx=p.x+dx/L*v,ny=p.y+dy/L*v,ox=p.x,oy=p.y,T=performance.now();if(ok(nx,p.y))p.x=nx;if(ok(p.x,ny))p.y=ny;const mv=Math.hypot(p.x-ox,p.y-oy);
 if(mv<v*.3){if(T-lastBump>450){lastBump=T;BM.Sound.play('bump')}if(!drag)g=null}else if(T-lastStep>230){lastStep=T;BM.Sound.play('step')}ang=Math.atan2(dx,-dy)*180/Math.PI;b.classList.add('walk')}else{if(!drag)g=null;b.classList.remove('walk')}}
 else b.classList.remove('walk');
-if(bd&&!bd.found&&Math.hypot(p.x-bd.x,p.y-bd.y)<R*1.6){bd.found=true;bu.classList.add('awake');BM.Sound.play('buddy');BM.data.buddies=Object.assign(BM.data.buddies||{},{[bd.id]:true});BM.save();to.textContent='You found '+bd.name+'!';to.classList.add('on');setTimeout(()=>to.classList.remove('on'),2200)}
+if(bd&&!bd.found&&Math.hypot(p.x-bd.x,p.y-bd.y)<R*1.6){bd.found=true;bu.classList.add('awake');BM.Sound.play('buddy');const F=BM.data.buddies||{};say(F[bd.id]?'WOW!':'You found '+bd.name+'!');F[bd.id]=true;BM.data.buddies=F;BM.save()}
 if(!got&&Math.hypot(p.x-sp.x,p.y-sp.y)<R*1.3){got=true;st.style.display='none';BM.Sound.play('star');BM.data.stars=(BM.data.stars||0)+1;BM.save();BM.showStars()}
 if(!won&&Math.hypot(p.x-(cw*(n-.5)),p.y-(ch*(n-.5)))<R*1.4){won=true;b.classList.remove('walk');BM.Sound.play('leaf');setTimeout(()=>{n=Math.min(6,n+1);init();pick()},900)}
 b.style.opacity=won?.35:1;b.style.left=p.x-S/2+'px';b.style.top=p.y-S/2+'px';b.style.transform='rotate('+ang+'deg)';requestAnimationFrame(step)}
 const pt=e=>{const r=s.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};init();window.newMaze=()=>{n=3;document.getElementById('menu').hidden=true;s.hidden=false;init();pick()};document.getElementById('home').onclick=e=>{e.stopPropagation();s.hidden=true;document.getElementById('menu').hidden=false;BM.showStars()};addEventListener('resize',()=>{if(!s.hidden)init()});
-s.addEventListener('pointerdown',e=>{if(e.target.closest('#home,#pick'))return;s.setPointerCapture(e.pointerId);drag=true;g=pt(e)});
+s.addEventListener('pointerdown',e=>{if(e.target.closest('#home,#pick,#flower'))return;s.setPointerCapture(e.pointerId);drag=true;g=pt(e)});
 s.addEventListener('pointermove',e=>{if(drag)g=pt(e)});
 s.addEventListener('pointerup',()=>{drag=false});step()})();
 </script>
@@ -112,17 +126,23 @@ s.addEventListener('pointerup',()=>{drag=false});step()})();
 <button class="mbtn b">♥ Credits</button>
 </div>
 <script>
-(()=>{const M=document.getElementById('menu');document.addEventListener('click',e=>{if(e.target.id=='coll-x'){BugMaze.Sound.play('tap');document.getElementById('coll').classList.add('hidden')}});BugMaze.showStars=()=>document.getElementById('stars').textContent=BugMaze.data.stars||0;BugMaze.showStars();
+(()=>{const M=document.getElementById('menu');
+const uid=(v,k)=>v.replace(/id="/g,'id="'+k+'-').replace(/url\(#/g,'url(#'+k+'-');BugMaze.uid=uid;
+function book(t){const B=t=='b',F=(B?BugMaze.data.buddies:BugMaze.data.flowers)||{},L=B?BugMaze.Buddies:BugMaze.Flowers;
+document.querySelectorAll('#tabs button').forEach(q=>q.setAttribute('aria-selected',q.dataset.t==t));
+document.getElementById('book').innerHTML=L.map(q=>`<div class="${F[q.id]?'':'no'}">${uid(q.svg,'bk')}${F[q.id]?(B?q.name.split(' ')[0]:q.name):'?'}</div>`).join('');
+document.getElementById('coll-n').textContent=`Found ${L.filter(q=>F[q.id]).length} of ${L.length}. `+(B?'Look in the dead ends!':'Tap flowers on the walls!')}
+document.addEventListener('click',e=>{const q=e.target.closest('#tabs button');if(q){BugMaze.Sound.play('tap');book(q.dataset.t)}});document.addEventListener('click',e=>{if(e.target.id=='coll-x'){BugMaze.Sound.play('tap');document.getElementById('coll').classList.add('hidden')}});BugMaze.showStars=()=>document.getElementById('stars').textContent=BugMaze.data.stars||0;BugMaze.showStars();
 const tap=()=>BugMaze.Sound.play('tap');
 {const t=document.getElementById('bug').cloneNode(true);t.removeAttribute('id');t.removeAttribute('style');t.setAttribute('class','tb');t.setAttribute('aria-hidden','true');M.querySelector('h2 .e').appendChild(t)}
-M.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{tap();if(b.textContent.includes('Play'))setTimeout(()=>newMaze(),150);if(b.textContent.includes('Collections')){const F=BugMaze.data.buddies||{},L=BugMaze.Buddies;document.getElementById('book').innerHTML=L.map(q=>`<div class="${F[q.id]?'':'no'}">${q.svg}${F[q.id]?q.name.split(' ')[0]:'?'}</div>`).join('');document.getElementById('coll-n').textContent=`Found ${L.filter(q=>F[q.id]).length} of ${L.length}. Look in the dead ends!`;document.getElementById('coll').classList.remove('hidden')}b.classList.add('p');setTimeout(()=>b.classList.remove('p'),120)});
-function run(){const F=Object.keys(BugMaze.data.buddies||{}),q=F.length&&Math.random()<.4?BugMaze.Buddies.find(z=>z.id==F[Math.random()*F.length|0]):null;let s=document.getElementById('bug').cloneNode(true);if(q){s=new DOMParser().parseFromString(q.svg,'image/svg+xml').documentElement;s.dataset.b=1}s.removeAttribute('id');s.setAttribute('class','mb');s.setAttribute('aria-hidden','true');s.removeAttribute('style');s.setAttribute('width',50);s.setAttribute('height',50);
+M.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{tap();if(b.textContent.includes('Play'))setTimeout(()=>newMaze(),150);if(b.textContent.includes('Collections')){book('b');document.getElementById('coll').classList.remove('hidden')}b.classList.add('p');setTimeout(()=>b.classList.remove('p'),120)});
+function run(){const F=Object.keys(BugMaze.data.buddies||{}),q=F.length&&Math.random()<.4?BugMaze.Buddies.find(z=>z.id==F[Math.random()*F.length|0]):null;let s=document.getElementById('bug').cloneNode(true);if(q){s=new DOMParser().parseFromString(uid(q.svg,'mn'+Math.random().toString(36).slice(2,7)),'image/svg+xml').documentElement;s.dataset.b=1}s.removeAttribute('id');s.setAttribute('class','mb');s.setAttribute('aria-hidden','true');s.removeAttribute('style');s.setAttribute('width',50);s.setAttribute('height',50);
 const W=M.clientWidth,H=M.clientHeight,l=Math.random()<.5,y=20+Math.random()*(H-90),y2=20+Math.random()*(H-90),x0=l?-60:W+10,x1=l?W+10:-60,ang=s.dataset.b?0:Math.atan2(y2-y,x1-x0)*180/Math.PI+90;
 s.style.cssText=`left:0;top:0;transform:translate(${x0}px,${y}px) rotate(${ang}deg);transition:transform ${3+Math.random()*2}s linear`;
 M.appendChild(s);requestAnimationFrame(()=>requestAnimationFrame(()=>s.style.transform=`translate(${x1}px,${y2}px) rotate(${ang}deg)`));setTimeout(()=>s.remove(),6000)}
 setInterval(()=>{if(M.clientWidth&&!matchMedia('(prefers-reduced-motion: reduce)').matches){run();if(Math.random()<.5)setTimeout(run,600)}},3500)})();
 </script>
-<div id="coll" class="overlay hidden top-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-t"><div class="pad-card"><h2 id="coll-t">Bug Buddies</h2><p class="pad-text" id="coll-n"></p><div id="book"></div><button id="coll-x" class="btn btn-small">Done</button></div></div>
+<div id="coll" class="overlay hidden top-overlay" role="dialog" aria-modal="true" aria-labelledby="coll-t"><div class="pad-card"><h2 id="coll-t">Collections</h2><div id="tabs" role="tablist"><button role="tab" data-t="b">🐞 Bug Buddies</button><button role="tab" data-t="f">🌷 Flowers</button></div><p class="pad-text" id="coll-n"></p><div id="book"></div><button id="coll-x" class="btn btn-small">Done</button></div></div>
 <button id="music" class="icon-btn" aria-label="Music on/off">🎵</button>
 <script>(()=>{const BM=BugMaze,m=document.getElementById('music'),show=()=>{m.textContent=BM.data.music?'🎵':'🔇';m.setAttribute('aria-pressed',BM.data.music)};show();
 m.onclick=e=>{e.stopPropagation();BM.data.music=!BM.data.music;BM.save();BM.data.music?BM.Music.start():BM.Music.stop();show()};
