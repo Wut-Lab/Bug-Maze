@@ -44,6 +44,10 @@ BM.data=BM.Save.load();BM.save=()=>BM.Save.write(BM.data)})();
 #swatches button::after{display:none}
 #buddy{position:absolute;pointer-events:none;display:none;animation:snooze 1.6s ease-in-out infinite alternate}
 #buddy svg{width:100%;height:100%;display:block}#buddy::after{content:"z z";position:absolute;right:-6px;top:-14px;font:700 16px 'Fredoka',sans-serif;color:#3d2c4e}
+.conf{position:absolute;z-index:4;width:12px;height:12px;margin:-6px;border-radius:3px;background:var(--c);color:var(--c);font:normal 22px/12px sans-serif;text-indent:-4px;pointer-events:none;animation:conf 1.1s cubic-bezier(.2,.8,.4,1) forwards}
+.conf:not(:empty){background:none}
+@keyframes conf{70%{opacity:1}to{transform:translate(var(--dx),var(--dy)) rotate(300deg);opacity:0}}
+#bug.yay{animation:yay .5s ease-in-out 3}@keyframes yay{50%{translate:0 -28%;scale:1.2}}
 #flower{position:absolute;z-index:2;display:none;cursor:pointer;animation:sway 1.4s ease-in-out infinite alternate}
 #flower svg{width:100%;height:100%;display:block;pointer-events:none}
 #flower.new{filter:drop-shadow(0 0 6px #ffd23f) drop-shadow(0 0 3px #ffe680)}
@@ -75,6 +79,8 @@ t.onclick=e=>{e.stopPropagation();BM.Sound.play('tap');c.forEach((v,i)=>sh[i].se
 if(BM.data.color&&COL[BM.data.color])COL[BM.data.color].forEach((v,i)=>sh[i].setAttribute('stop-color',v));
 const say=t=>{to.textContent=t;to.classList.add('on');clearTimeout(say.t);say.t=setTimeout(()=>to.classList.remove('on'),2200)};
 fl.addEventListener('pointerdown',e=>{e.stopPropagation();if(!fd||fl.classList.contains('awake'))return;BM.Sound.play('flower');const F=BM.data.flowers||{};say(F[fd.id]?'WOW!':'You found a '+fd.name+'!');F[fd.id]=true;BM.data.flowers=F;BM.data.flowersCaught=(BM.data.flowersCaught||0)+1;BM.save();fl.classList.add('awake')});
+const party=(px,py)=>{for(let i=0;i<18;i++){const d=document.createElement('i'),a=i/18*6.283,r=R*(2.5+Math.random()*2);d.className='conf';d.textContent=i%3?'':'❤';
+d.style.cssText=`left:${px}px;top:${py}px;--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r}px;--c:${['#ff6fae','#ffd23f','#4fd16a','#6ec6ff','#e8402f','#9a5ae8'][i%6]}`;s.appendChild(d);setTimeout(()=>d.remove(),1200)}};
 const pick=()=>{pk.hidden=false;drag=false;g=null};
 function make(n){const w=[...Array(n*n)].map(()=>[1,1,1,1]),v=new Set([0]),st=[0],D=[[0,-1,0,2],[1,0,1,3],[0,1,2,0],[-1,0,3,1]];
 while(st.length){const i=st[st.length-1],cx=i%n,cy=i/n|0,o=D.filter(([dx,dy])=>{const a=cx+dx,c=cy+dy;return a>=0&&c>=0&&a<n&&c<n&&!v.has(c*n+a)});
@@ -100,8 +106,8 @@ if(mv<v*.3){if(T-lastBump>450){lastBump=T;BM.Sound.play('bump')}if(!drag)g=null}
 else b.classList.remove('walk');
 if(bd&&!bd.found&&Math.hypot(p.x-bd.x,p.y-bd.y)<R*1.6){bd.found=true;bu.classList.add('awake');BM.Sound.play('buddy');const F=BM.data.buddies||{};say(F[bd.id]?'WOW!':'You found '+bd.name+'!');F[bd.id]=true;BM.data.buddies=F;BM.data.buddiesCaught=(BM.data.buddiesCaught||0)+1;BM.save()}
 if(!got&&Math.hypot(p.x-sp.x,p.y-sp.y)<R*1.3){got=true;st.style.display='none';BM.Sound.play('star');BM.data.stars=(BM.data.stars||0)+1;BM.save();BM.showStars()}
-if(!won&&Math.hypot(p.x-(cw*(n-.5)),p.y-(ch*(n-.5)))<R*1.4){won=true;b.classList.remove('walk');BM.Sound.play('leaf');setTimeout(()=>{n=Math.min(6,n+1);init();pick()},900)}
-b.style.opacity=won?.35:1;b.style.left=p.x-S/2+'px';b.style.top=p.y-S/2+'px';b.style.transform='rotate('+ang+'deg)';requestAnimationFrame(step)}
+if(!won&&Math.hypot(p.x-(cw*(n-.5)),p.y-(ch*(n-.5)))<R*1.4){won=true;b.classList.remove('walk');BM.Sound.play('leaf');BM.Sound.play('yay');b.classList.add('yay');party(p.x,p.y);setTimeout(()=>{b.classList.remove('yay');n=Math.min(6,n+1);init();pick()},1500)}
+b.style.left=p.x-S/2+'px';b.style.top=p.y-S/2+'px';b.style.transform='rotate('+ang+'deg)';requestAnimationFrame(step)}
 const pt=e=>{const r=s.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};init();window.newMaze=()=>{n=3;document.getElementById('menu').hidden=true;s.hidden=false;init();pick()};document.getElementById('home').onclick=e=>{e.stopPropagation();s.hidden=true;document.getElementById('menu').hidden=false;BM.showStars()};addEventListener('resize',()=>{if(!s.hidden)init()});
 s.addEventListener('pointerdown',e=>{if(e.target.closest('#home,#pick,#flower'))return;s.setPointerCapture(e.pointerId);drag=true;g=pt(e)});
 s.addEventListener('pointermove',e=>{if(drag)g=pt(e)});

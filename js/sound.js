@@ -26,6 +26,14 @@
     buddy: () => [784, 988, 1175, 988, 1319].forEach((f, i) => tone(f, f * 1.05, 0.12, 'square', 0.06, i * 0.07)),
     flower: () => [659, 831, 988, 1319].forEach((f, i) => tone(f, f, 0.3, 'sine', 0.1, i * 0.05)),
     soft: () => tone(520, 380, 0.07, 'sine', 0.08),
+    yay: () => {
+      // A real "Yay!" where the browser can speak; a cheerful whoop otherwise.
+      try {
+        const u = new SpeechSynthesisUtterance('Yay!');
+        u.pitch = 1.8; u.rate = 1.1; u.volume = 0.9;
+        speechSynthesis.speak(u);
+      } catch (e) { tone(500, 900, 0.3, 'triangle', 0.15); }
+    },
     star: () => [1047, 1319, 1568, 2093].forEach((f, i) => tone(f, f, 0.15, 'sine', 0.12, i * 0.06)),
   };
   BM.Sound = { play: (name) => SFX[name] && SFX[name]() };
