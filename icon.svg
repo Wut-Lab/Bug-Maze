@@ -14,4 +14,4 @@
 <circle cx="89" cy="62" r="7" fill="#fff"/><circle cx="111" cy="62" r="7" fill="#fff"/>
 <circle cx="90" cy="63" r="3.5" fill="#2b2b2b"/><circle cx="112" cy="63" r="3.5" fill="#2b2b2b"/>
 <ellipse cx="78" cy="98" rx="14" ry="7" fill="#fff" opacity=".5" transform="rotate(-30 78 98)"/>
-</g></svg>
+</g><text x="186" y="188" text-anchor="end" font-family="Fredoka,Arial Black,sans-serif" font-weight="900" font-size="40" fill="#000" stroke="#fff" stroke-width="3" paint-order="stroke">LM</text></svg>
