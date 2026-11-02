@@ -71,7 +71,7 @@ BM.data=BM.Save.load();BM.save=()=>BM.Save.write(BM.data)})();
 <script>
 (()=>{const s=document.getElementById('stage'),b=document.getElementById('bug'),cv=document.createElement('canvas'),x=cv.getContext('2d');
 cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';s.prepend(cv);
-let n=3,w,cw,ch,R,S,p,g=null,drag=false,ang=0,won=false,sp,got,bd=null,fd=null,lastStep=0,lastBump=0;
+let lv=0,n=2,w,cw,ch,R,S,p,g=null,drag=false,ang=0,won=false,sp,got,bd=null,fd=null,lastStep=0,lastBump=0;
 const BM=window.BugMaze,fl=document.getElementById('flower'),bu=document.getElementById('buddy'),to=document.getElementById('toast'),st=document.getElementById('star'),pk=document.getElementById('pick'),sh=document.querySelectorAll('#sh stop');
 const COL={Red:['#ff7a5c','#e8402f','#9e1f14'],Blue:['#7ab8ff','#2f7de8','#14449e'],Yellow:['#fff27a','#f2c81f','#a8820a'],Pink:['#ffb3d6','#ff6fae','#b8336f'],Orange:['#ffb066','#f57c1f','#a84a0a'],Purple:['#c99bff','#8e4fe0','#53209e']};
 const sw=document.getElementById('swatches');Object.entries(COL).forEach(([k,c])=>{const t=document.createElement('button');t.setAttribute('aria-label',k);t.style.background=`radial-gradient(circle at 35% 30%,${c[0]},${c[1]} 55%,${c[2]})`;
@@ -81,6 +81,8 @@ const say=t=>{to.textContent=t;to.classList.add('on');clearTimeout(say.t);say.t=
 fl.addEventListener('pointerdown',e=>{e.stopPropagation();if(!fd||fl.classList.contains('awake'))return;BM.Sound.play('flower');const F=BM.data.flowers||{};say(F[fd.id]?'WOW!':'You found a '+fd.name+'!');F[fd.id]=true;BM.data.flowers=F;BM.data.flowersCaught=(BM.data.flowersCaught||0)+1;BM.save();fl.classList.add('awake')});
 const party=(px,py)=>{for(let i=0;i<18;i++){const d=document.createElement('i'),a=i/18*6.283,r=R*(2.5+Math.random()*2);d.className='conf';d.textContent=i%3?'':'❤';
 d.style.cssText=`left:${px}px;top:${py}px;--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r}px;--c:${['#ff6fae','#ffd23f','#4fd16a','#6ec6ff','#e8402f','#9a5ae8'][i%6]}`;s.appendChild(d);setTimeout(()=>d.remove(),1200)}};
+// Toddler pacing: 2×2 for the first 2 mazes, 3×3 for the next 4, then 4×4 at most.
+const size=()=>lv<2?2:lv<6?3:4;
 const pick=()=>{pk.hidden=false;drag=false;g=null};
 function make(n){const w=[...Array(n*n)].map(()=>[1,1,1,1]),v=new Set([0]),st=[0],D=[[0,-1,0,2],[1,0,1,3],[0,1,2,0],[-1,0,3,1]];
 while(st.length){const i=st[st.length-1],cx=i%n,cy=i/n|0,o=D.filter(([dx,dy])=>{const a=cx+dx,c=cy+dy;return a>=0&&c>=0&&a<n&&c<n&&!v.has(c*n+a)});
@@ -106,9 +108,9 @@ if(mv<v*.3){if(T-lastBump>450){lastBump=T;BM.Sound.play('bump')}if(!drag)g=null}
 else b.classList.remove('walk');
 if(bd&&!bd.found&&Math.hypot(p.x-bd.x,p.y-bd.y)<R*1.6){bd.found=true;bu.classList.add('awake');BM.Sound.play('buddy');const F=BM.data.buddies||{};say(F[bd.id]?'WOW!':'You found '+bd.name+'!');F[bd.id]=true;BM.data.buddies=F;BM.data.buddiesCaught=(BM.data.buddiesCaught||0)+1;BM.save()}
 if(!got&&Math.hypot(p.x-sp.x,p.y-sp.y)<R*1.3){got=true;st.style.display='none';BM.Sound.play('star');BM.data.stars=(BM.data.stars||0)+1;BM.save();BM.showStars()}
-if(!won&&Math.hypot(p.x-(cw*(n-.5)),p.y-(ch*(n-.5)))<R*1.4){won=true;b.classList.remove('walk');BM.Sound.play('leaf');BM.Sound.play('yay');b.classList.add('yay');party(p.x,p.y);setTimeout(()=>{b.classList.remove('yay');n=Math.min(6,n+1);init();pick()},1500)}
+if(!won&&Math.hypot(p.x-(cw*(n-.5)),p.y-(ch*(n-.5)))<R*1.4){won=true;b.classList.remove('walk');BM.Sound.play('leaf');BM.Sound.play('yay');b.classList.add('yay');party(p.x,p.y);setTimeout(()=>{b.classList.remove('yay');lv++;n=size();init();pick()},1500)}
 b.style.left=p.x-S/2+'px';b.style.top=p.y-S/2+'px';b.style.transform='rotate('+ang+'deg)';requestAnimationFrame(step)}
-const pt=e=>{const r=s.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};init();window.newMaze=()=>{n=3;document.getElementById('menu').hidden=true;s.hidden=false;init();pick()};document.getElementById('home').onclick=e=>{e.stopPropagation();s.hidden=true;document.getElementById('menu').hidden=false;BM.showStars()};addEventListener('resize',()=>{if(!s.hidden)init()});
+const pt=e=>{const r=s.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};init();window.newMaze=()=>{lv=0;n=size();document.getElementById('menu').hidden=true;s.hidden=false;init();pick()};document.getElementById('home').onclick=e=>{e.stopPropagation();s.hidden=true;document.getElementById('menu').hidden=false;BM.showStars()};addEventListener('resize',()=>{if(!s.hidden)init()});
 s.addEventListener('pointerdown',e=>{if(e.target.closest('#home,#pick,#flower'))return;s.setPointerCapture(e.pointerId);drag=true;g=pt(e)});
 s.addEventListener('pointermove',e=>{if(drag)g=pt(e)});
 s.addEventListener('pointerup',()=>{drag=false});step()})();
